@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { Link } from 'expo-router';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { LogOut, Settings, User, Shield, Terminal, HardDrive } from 'lucide-react-native';
 import { BlueprintGrid } from '../../src/components/BlueprintGrid';
@@ -53,10 +54,12 @@ export default function ProfileScreen() {
         <Animated.View entering={FadeInDown.delay(200).duration(600)} className="space-y-4">
           <Text className="text-parchment font-monoBold text-[10px] uppercase tracking-[0.4em] mb-4 opacity-70">Configuration</Text>
           
-          <TouchableOpacity className="flex-row items-center bg-carbon border border-slate-wire p-5 rounded-sm active:bg-graphite">
-            <Settings color="#C4B9A8" size={18} className="mr-4 opacity-70" />
-            <Text className="text-bone font-mono text-xs uppercase tracking-widest">Global Preferences</Text>
-          </TouchableOpacity>
+          <Link href="/profile/settings" asChild>
+            <TouchableOpacity className="flex-row items-center bg-carbon border border-slate-wire p-5 rounded-sm active:bg-graphite">
+              <Settings color="#C4B9A8" size={18} className="mr-4 opacity-70" />
+              <Text className="text-bone font-mono text-xs uppercase tracking-widest">Security Configuration</Text>
+            </TouchableOpacity>
+          </Link>
 
           <TouchableOpacity 
             className="flex-row items-center bg-carbon border border-rust/30 p-5 rounded-sm mt-4 active:bg-rust/5"

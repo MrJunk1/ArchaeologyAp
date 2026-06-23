@@ -70,11 +70,18 @@ export default function LoginScreen() {
           )}
         </TouchableOpacity>
 
-        <Link href="/(auth)/register" asChild>
-          <TouchableOpacity className="py-4 items-center mt-2">
-            <Text className="text-parchment font-mono text-xs uppercase tracking-wider">Request Access Credentials</Text>
-          </TouchableOpacity>
-        </Link>
+        <View className="items-center mt-2 space-y-2">
+          <Link href="/(auth)/register" asChild>
+            <TouchableOpacity className="py-2 items-center">
+              <Text className="text-parchment font-mono text-xs uppercase tracking-wider">Request Access Credentials</Text>
+            </TouchableOpacity>
+          </Link>
+          <Link href="/(auth)/forgot-password" asChild>
+            <TouchableOpacity className="py-2 items-center">
+              <Text className="text-slate-wire font-mono text-xs uppercase tracking-wider underline">Forgot Passcode?</Text>
+            </TouchableOpacity>
+          </Link>
+        </View>
       </View>
     </View>
   );
