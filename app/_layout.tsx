@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Platform } from 'react-native';
 import { Slot, useRouter, useSegments } from 'expo-router';
 import { useFonts, CormorantGaramond_600SemiBold } from '@expo-google-fonts/cormorant-garamond';
 import { IBMPlexMono_400Regular, IBMPlexMono_600SemiBold } from '@expo-google-fonts/ibm-plex-mono';
@@ -6,6 +7,7 @@ import { CrimsonPro_400Regular } from '@expo-google-fonts/crimson-pro';
 import * as SplashScreen from 'expo-splash-screen';
 import { AuthProvider, useAuth } from '../src/contexts/AuthContext';
 import { StatusBar } from 'expo-status-bar';
+import { Analytics } from '@vercel/analytics/react';
 import '../global.css';
 
 SplashScreen.preventAutoHideAsync();
@@ -52,6 +54,7 @@ export default function RootLayout() {
     <AuthProvider>
       <InitialLayout />
       <StatusBar style="light" />
+      {Platform.OS === 'web' && <Analytics />}
     </AuthProvider>
   );
 }
