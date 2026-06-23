@@ -1,23 +1,41 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { Link } from 'expo-router';
-import { BlurView } from 'expo-blur';
 import { supabase } from '../../src/lib/supabase';
 import { Lock, Mail } from 'lucide-react-native';
+import { StatusBanner, StatusType } from '../../src/components/StatusBanner';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<{ type: StatusType; message: string } | null>(null);
 
   async function signInWithEmail() {
+    // Clear previous status
+    setStatus(null);
+
+    // Validate inputs
+    if (!email.trim()) {
+      setStatus({ type: 'error', message: 'Please enter your Operator ID (Email).' });
+      return;
+    }
+    if (!password) {
+      setStatus({ type: 'error', message: 'Please enter your Passcode.' });
+      return;
+    }
+
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
-      email,
+      email: email.trim(),
       password,
     });
 
-    if (error) Alert.alert('Error', error.message);
+    if (error) {
+      setStatus({ type: 'error', message: error.message });
+    } else {
+      setStatus({ type: 'success', message: 'Identity verified. Initializing session…' });
+    }
     setLoading(false);
   }
 
@@ -32,6 +50,15 @@ export default function LoginScreen() {
         <Text className="text-parchment font-mono tracking-widest text-xs uppercase">Curatorial Access Terminal v1.0</Text>
       </View>
 
+      {/* Inline status feedback */}
+      <StatusBanner
+        type={status?.type ?? 'info'}
+        message={status?.message ?? ''}
+        visible={!!status}
+        onDismiss={() => setStatus(null)}
+        autoDismissMs={status?.type === 'success' ? 3000 : 8000}
+      />
+
       <View className="space-y-4">
         <View className="bg-carbon border border-slate-wire rounded-sm p-3 flex-row items-center relative overflow-hidden">
            <Mail className="text-slate-wire mr-3" size={20} />
@@ -40,7 +67,7 @@ export default function LoginScreen() {
              placeholder="Operator ID (Email)"
              placeholderTextColor="#2A3040"
              value={email}
-             onChangeText={setEmail}
+             onChangeText={(t) => { setEmail(t); setStatus(null); }}
              autoCapitalize="none"
              keyboardType="email-address"
            />
@@ -53,7 +80,7 @@ export default function LoginScreen() {
              placeholder="Passcode"
              placeholderTextColor="#2A3040"
              value={password}
-             onChangeText={setPassword}
+             onChangeText={(t) => { setPassword(t); setStatus(null); }}
              secureTextEntry
            />
         </View>
@@ -62,6 +89,7 @@ export default function LoginScreen() {
           className="bg-copper py-4 items-center rounded-sm border border-copper/50 mt-8 flex-row justify-center"
           onPress={signInWithEmail}
           disabled={loading}
+          style={loading ? { opacity: 0.7 } : undefined}
         >
           {loading ? (
             <ActivityIndicator color="#0A0C10" />

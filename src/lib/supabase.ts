@@ -1,6 +1,7 @@
 import 'react-native-url-polyfill/auto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
+import { Platform } from 'react-native';
 
 // ──────────────────────────────────────────────────────────────
 // Supabase Client — reads from .env.local via Expo's env system
@@ -29,7 +30,11 @@ export const supabase = createClient(
       storage: AsyncStorage,
       autoRefreshToken: true,
       persistSession: true,
-      detectSessionInUrl: false,
+      // On web, Supabase appends auth tokens to the URL fragment (#access_token=...)
+      // after password recovery redirects. detectSessionInUrl must be true on web
+      // so the client picks up these tokens and establishes the recovery session.
+      // On native, deep linking is handled separately, so we keep it false.
+      detectSessionInUrl: Platform.OS === 'web',
     },
   }
 );

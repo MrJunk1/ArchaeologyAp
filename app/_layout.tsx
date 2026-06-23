@@ -13,7 +13,7 @@ import '../global.css';
 SplashScreen.preventAutoHideAsync();
 
 const InitialLayout = () => {
-  const { session, initialized } = useAuth();
+  const { session, initialized, isRecoveryMode } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
@@ -22,12 +22,20 @@ const InitialLayout = () => {
 
     const inAuthGroup = segments[0] === '(auth)';
 
+    // If the user just clicked a password recovery link, redirect
+    // them straight to the update-password screen regardless of
+    // what route they're currently on.
+    if (isRecoveryMode && session) {
+      router.replace('/profile/update-password');
+      return;
+    }
+
     if (session && inAuthGroup) {
       router.replace('/(tabs)');
     } else if (!session && !inAuthGroup) {
       router.replace('/(auth)/login');
     }
-  }, [session, initialized, segments]);
+  }, [session, initialized, segments, isRecoveryMode]);
 
   return <Slot />;
 };
